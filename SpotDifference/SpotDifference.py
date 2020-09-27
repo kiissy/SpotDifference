@@ -27,6 +27,7 @@ class DifferencePoint:
         self.left_check.locate(scene, lcx - check_margin, cy - check_margin)
         self.right_check = Object("images/check.png")
         self.right_check.locate(scene, rcx - check_margin, cy - check_margin)
+        self.found = False
 
     def checkIn(self, x, y):
         return self.left_rect.checkIn(x, y) or self.right_rect.checkIn(x, y)
@@ -34,6 +35,7 @@ class DifferencePoint:
     def show(self):
         self.left_check.show()
         self.right_check.show()
+        self.found = True
 
 # 첫번째 틀린 위치 (568, 594), (1186, 594) - 54
 points = [
@@ -58,13 +60,25 @@ points = [
 #def checkIn(x, y, cx, cy, r):
 #    return cx - r < x < cx + r and cy - r < y < cy + r
 
+count = 0
 def problem_onMouseAction(x, y, action):
+    wrong = True
     #if rect1_left.checkIn(x, y) or rect1_right.checkIn(x, y):
     #    check1_left.show()
     #    check1_right.show()
     for p in points:
         if p.checkIn(x, y):
-            p.show()
+            wrong = False
+            if p.found == False:
+                global count
+                count = count + 1
+                p.show()
+
+    if count == 7:
+        showMessage("다 찾았다!")
+
+    if wrong:
+        endGame()
 problem.onMouseAction = problem_onMouseAction
 
 showMessage("좌우에 틀린 곳을 찾아보세요.")
